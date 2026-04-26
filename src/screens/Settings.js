@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Alert, Share, Linking, ScrollView, StyleSheet } from 'react-native';
 
 import Cell from '../components/Cell';
 import { auth } from '../config/firebase';
 import ContactRow from '../components/ContactRow';
-import { layout, spacing } from '../config/constants';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 
 const Settings = ({ navigation }) => {
   const githubUrl = 'https://github.com/Ctere1/react-native-chat';
@@ -22,7 +24,7 @@ const Settings = ({ navigation }) => {
   const handleInviteFriend = useCallback(async () => {
     try {
       await Share.share({
-        message: `Check out React Native Chat: ${githubUrl}`,
+        message: `Check out Luna – The Moon Project: ${githubUrl}`,
       });
     } catch (error) {
       Alert.alert('Unable to share', error.message);
@@ -39,24 +41,23 @@ const Settings = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.card}>
+        <GlassCard style={styles.card}>
           <ContactRow
             name={auth?.currentUser?.displayName ?? 'No name'}
             subtitle={auth?.currentUser?.email ?? 'No email'}
-            style={styles.contactRow}
             onPress={handleOpenProfile}
           />
-        </View>
+        </GlassCard>
 
-        <View style={styles.card}>
+        <GlassCard style={styles.card}>
           <Cell
             title="Account"
             subtitle="Privacy, logout, and account deletion"
             icon="key-outline"
             onPress={handleOpenAccount}
-            iconColor="black"
+            tintColor={colors.surface}
             accessibilityHint="Opens account actions"
           />
 
@@ -64,27 +65,27 @@ const Settings = ({ navigation }) => {
             title="Help"
             subtitle="Support, troubleshooting, and project help"
             icon="help-circle-outline"
-            iconColor="black"
+            tintColor={colors.surface}
             onPress={handleOpenHelp}
             accessibilityHint="Opens help and support"
           />
 
           <Cell
             title="About"
-            subtitle="Project details and Firebase setup model"
+            subtitle="Project details and Luna information"
             icon="information-circle-outline"
-            iconColor="black"
+            tintColor={colors.surface}
             onPress={handleOpenAbout}
             accessibilityHint="Opens app information"
           />
-        </View>
+        </GlassCard>
 
-        <View style={styles.card}>
+        <GlassCard style={styles.card}>
           <Cell
             title="Invite a friend"
-            subtitle="Share the app with someone you trust"
+            subtitle="Share Luna with someone you trust"
             icon="people-outline"
-            iconColor="black"
+            tintColor={colors.surface}
             onPress={handleInviteFriend}
             showForwardIcon={false}
             accessibilityHint="Opens the system share sheet"
@@ -94,29 +95,19 @@ const Settings = ({ navigation }) => {
             title="Open source project"
             subtitle="View the repository and release history"
             icon="logo-github"
-            tintColor="#111827"
+            tintColor={colors.surface}
             onPress={handleOpenGithub}
             accessibilityHint="Opens the GitHub repository in your browser"
           />
-        </View>
+        </GlassCard>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
     marginBottom: spacing.sm,
-    overflow: 'hidden',
-  },
-  contactRow: {
-    backgroundColor: 'white',
-  },
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
   },
   content: {
     paddingBottom: spacing.lg,

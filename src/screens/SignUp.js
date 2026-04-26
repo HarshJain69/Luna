@@ -1,22 +1,24 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { doc, setDoc } from 'firebase/firestore';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 import {
   Text,
   View,
-  Image,
   Alert,
   TextInput,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import backImage from '../assets/background.png';
 import { auth, database } from '../config/firebase';
-import { colors, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 
 export default function SignUp({ navigation }) {
   const [email, setEmail] = useState('');
@@ -48,83 +50,111 @@ export default function SignUp({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={backImage} style={styles.backImage} />
-      <View style={styles.whiteSheet} />
-      <SafeAreaView style={styles.form}>
-        <Text style={styles.title}>Sign Up</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter name"
-          autoCapitalize="none"
-          keyboardType="name-phone-pad"
-          textContentType="name"
-          autoFocus
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter password"
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry
-          textContentType="password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity style={styles.button} onPress={onHandleSignup}>
-          <Text style={styles.buttonLabel}>Sign Up</Text>
-        </TouchableOpacity>
-        <View style={styles.footerRow}>
-          <Text style={styles.footerText}>
-            Already have an account?{' '}
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.footerLink}>Log In</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+    <LinearGradient colors={[colors.background, colors.backgroundEnd]} style={styles.container}>
       <StatusBar barStyle="light-content" />
-    </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <View style={styles.form}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Ionicons name="moon" size={40} color={colors.accent} />
+            </View>
+          </View>
+
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Join Luna and start chatting</Text>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="person-outline" size={20} color={colors.textMuted} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Full name"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              keyboardType="name-phone-pad"
+              textContentType="name"
+              autoFocus
+              value={username}
+              onChangeText={setUsername}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="mail-outline" size={20} color={colors.textMuted} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email address"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={20} color={colors.textMuted} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              textContentType="password"
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={onHandleSignup}>
+            <LinearGradient
+              colors={[colors.accent, colors.accentDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonLabel}>Create Account</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.footerLink}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
+
 const styles = StyleSheet.create({
-  backImage: {
-    height: 340,
-    position: 'absolute',
-    resizeMode: 'cover',
-    top: 0,
-    width: '100%',
-  },
   button: {
+    borderRadius: 16,
+    marginTop: spacing.lg,
+    overflow: 'hidden',
+  },
+  buttonGradient: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    height: 58,
+    height: 56,
     justifyContent: 'center',
-    marginTop: spacing.sm,
   },
   buttonLabel: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: colors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   container: {
-    backgroundColor: '#fff',
     flex: 1,
   },
   footerLink: {
-    color: colors.pink,
+    color: colors.accentLight,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -132,40 +162,65 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: spacing.lg,
+    marginTop: spacing.xl,
   },
   footerText: {
-    color: 'gray',
+    color: colors.textTertiary,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '400',
   },
   form: {
     flex: 1,
     justifyContent: 'center',
-    marginHorizontal: spacing.xl,
+    paddingHorizontal: spacing.xl,
   },
   input: {
-    backgroundColor: '#F6F7FB',
-    borderRadius: 10,
+    color: colors.textPrimary,
+    flex: 1,
     fontSize: 16,
-    height: 58,
-    marginBottom: spacing.sm,
-    padding: 12,
+    height: 56,
+    paddingVertical: 0,
   },
-  title: {
-    alignSelf: 'center',
-    color: 'black',
-    fontSize: 36,
-    fontWeight: 'bold',
+  inputContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.inputBg,
+    borderColor: colors.inputBorder,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  inputIcon: {
+    marginRight: spacing.sm,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  logoCircle: {
+    alignItems: 'center',
+    backgroundColor: colors.accentGlow,
+    borderColor: colors.glassBorder,
+    borderRadius: 36,
+    borderWidth: 1,
+    height: 72,
+    justifyContent: 'center',
+    width: 72,
+  },
+  logoContainer: {
+    alignItems: 'center',
     marginBottom: spacing.lg,
   },
-  whiteSheet: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 60,
-    bottom: 0,
-    height: '75%',
-    position: 'absolute',
-    width: '100%',
+  subtitle: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    marginBottom: spacing.lg,
+  },
+  title: {
+    color: colors.textPrimary,
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: spacing.xs,
   },
 });
 

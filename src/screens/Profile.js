@@ -1,17 +1,19 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Cell from '../components/Cell';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
 import { auth } from '../config/firebase';
 import { buildInitials } from '../utils/chat';
-import { colors, layout, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 
 const Profile = () => {
   const initials = buildInitials(auth?.currentUser?.displayName || auth?.currentUser?.email || '');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <View style={styles.avatarContainer}>
         <View style={styles.avatar}>
           <Text style={styles.avatarLabel}>{initials}</Text>
@@ -19,13 +21,13 @@ const Profile = () => {
       </View>
 
       <View style={styles.infoContainer}>
-        <View style={styles.card}>
+        <GlassCard>
           <Cell
             title="Name"
             icon="person-outline"
-            iconColor="black"
             subtitle={auth?.currentUser?.displayName || 'No name set'}
             showForwardIcon={false}
+            tintColor={colors.surface}
             style={styles.cellDivider}
           />
 
@@ -33,8 +35,8 @@ const Profile = () => {
             title="Email"
             subtitle={auth?.currentUser?.email}
             icon="mail-outline"
-            iconColor="black"
             showForwardIcon={false}
+            tintColor={colors.surface}
             style={styles.cellDivider}
           />
 
@@ -42,45 +44,40 @@ const Profile = () => {
             title="About"
             subtitle="Available"
             icon="information-circle-outline"
-            iconColor="black"
             showForwardIcon={false}
+            tintColor={colors.surface}
           />
-        </View>
+        </GlassCard>
       </View>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   avatar: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     borderRadius: 48,
     height: 96,
     justifyContent: 'center',
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
     width: 96,
   },
   avatarContainer: {
     alignItems: 'center',
-    marginTop: layout.pageTopInset,
+    marginTop: spacing.lg,
   },
   avatarLabel: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 30,
     fontWeight: 'bold',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
-    overflow: 'hidden',
-  },
   cellDivider: {
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: colors.divider,
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
   },
   infoContainer: {
     marginTop: spacing.lg,

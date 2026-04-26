@@ -17,9 +17,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { auth } from '../config/firebase';
-import { colors } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 import MessageVideo from '../components/MessageVideo';
 import {
   mergeMessages,
@@ -41,13 +43,13 @@ import {
 
 const RenderLoadingUpload = () => (
   <View style={styles.loadingContainerUpload}>
-    <ActivityIndicator size="large" color={colors.teal} />
+    <ActivityIndicator size="large" color={colors.accent} />
   </View>
 );
 
 const RenderLoading = () => (
   <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color={colors.teal} />
+    <ActivityIndicator size="large" color={colors.accent} />
   </View>
 );
 
@@ -55,9 +57,18 @@ const RenderBubble = (props) => (
   <Bubble
     {...props}
     wrapperStyle={{
-      right: { backgroundColor: colors.primary },
-      left: { backgroundColor: 'lightgrey' },
+      right: styles.bubbleRight,
+      left: styles.bubbleLeft,
     }}
+    textStyle={{
+      right: styles.bubbleTextRight,
+      left: styles.bubbleTextLeft,
+    }}
+    timeTextStyle={{
+      right: styles.timeTextRight,
+      left: styles.timeTextLeft,
+    }}
+    usernameStyle={styles.usernameStyle}
   />
 );
 
@@ -70,35 +81,33 @@ const RenderAttach = (props) => (
     style={styles.addImageIcon}
   >
     <View>
-      <Ionicons name="attach-outline" size={32} color={colors.teal} />
+      <Ionicons name="attach-outline" size={28} color={colors.accent} />
     </View>
   </TouchableOpacity>
 );
 
 const RenderInputToolbar = (props, handleEmojiPanel) => (
-  <View
-    style={{
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 4,
-      backgroundColor: 'white',
-    }}
-  >
-    <InputToolbar
-      {...props}
-      renderActions={() => RenderActions(handleEmojiPanel)}
-      containerStyle={styles.inputToolbar}
-    />
-    <Send
-      {...props}
-      accessibilityHint="Sends the current message"
-      accessibilityLabel="Send message"
-      accessibilityRole="button"
-    >
-      <View style={styles.sendIconContainer}>
-        <Ionicons name="send" size={24} color={colors.teal} />
-      </View>
-    </Send>
+  <View style={styles.inputBarOuter}>
+    <View style={styles.inputBarGlass}>
+      <InputToolbar
+        {...props}
+        renderActions={() => RenderActions(handleEmojiPanel)}
+        containerStyle={styles.inputToolbar}
+        primaryStyle={styles.inputPrimary}
+      />
+      <Send
+        {...props}
+        accessibilityHint="Sends the current message"
+        accessibilityLabel="Send message"
+        accessibilityRole="button"
+      >
+        <View style={styles.sendIconContainer}>
+          <View style={styles.sendButton}>
+            <Ionicons name="arrow-up" size={20} color={colors.textPrimary} />
+          </View>
+        </View>
+      </Send>
+    </View>
   </View>
 );
 
@@ -111,7 +120,7 @@ const RenderActions = (handleEmojiPanel) => (
     onPress={handleEmojiPanel}
   >
     <View>
-      <Ionicons name="happy-outline" size={32} color={colors.teal} />
+      <Ionicons name="happy-outline" size={28} color={colors.accent} />
     </View>
   </TouchableOpacity>
 );
@@ -430,13 +439,13 @@ function Chat({ route }) {
 
     switch (currentMessage.status) {
       case MESSAGE_STATUS.SENDING:
-        return <Ionicons name="time-outline" size={14} color="white" />;
+        return <Ionicons name="time-outline" size={14} color="rgba(255,255,255,0.6)" />;
       case MESSAGE_STATUS.FAILED:
-        return <Ionicons name="alert-circle-outline" size={14} color="#ffd0d0" />;
+        return <Ionicons name="alert-circle-outline" size={14} color="#ffa0a0" />;
       case MESSAGE_STATUS.READ:
-        return <Ionicons name="checkmark-done" size={14} color="#d5f6ff" />;
+        return <Ionicons name="checkmark-done" size={14} color="#a5b4fc" />;
       default:
-        return <Ionicons name="checkmark" size={14} color="white" />;
+        return <Ionicons name="checkmark" size={14} color="rgba(255,255,255,0.7)" />;
     }
   }, []);
 
@@ -472,56 +481,64 @@ function Chat({ route }) {
   return (
     <>
       {uploading && RenderLoadingUpload()}
-      <GiftedChat
-        messages={displayedMessages}
-        showAvatarForEveryMessage={false}
-        showUserAvatar={false}
-        onSend={(messagesToSend) => sendMessage(messagesToSend[0])}
-        imageStyle={{ height: 212, width: 212 }}
-        messagesContainerStyle={{ backgroundColor: '#fff' }}
-        textInputStyle={{ backgroundColor: '#fff', borderRadius: 20 }}
-        user={{
-          _id: auth?.currentUser?.email,
-          name: auth?.currentUser?.displayName,
-          avatar: 'https://i.pravatar.cc/300',
-        }}
-        renderBubble={RenderBubble}
-        renderMessageVideo={MessageVideo}
-        renderSend={(props) => RenderAttach({ ...props, onPress: handleAttachmentPress })}
-        renderUsernameOnMessage
-        renderAvatarOnTop
-        renderInputToolbar={(props) => RenderInputToolbar(props, handleEmojiPanel)}
-        minInputToolbarHeight={56}
-        scrollToBottom
-        onPressActionButton={handleEmojiPanel}
-        scrollToBottomStyle={styles.scrollToBottomStyle}
-        renderLoading={loading ? RenderLoading : undefined}
-        renderTicks={renderTicks}
-        renderChatFooter={() => {
-          if (uploading) {
-            return <Text style={styles.statusBanner}>Uploading media...</Text>;
-          }
+      <LinearGradient
+        colors={[colors.background, colors.backgroundEnd]}
+        style={styles.gradientContainer}
+      >
+        <GiftedChat
+          messages={displayedMessages}
+          showAvatarForEveryMessage={false}
+          showUserAvatar={false}
+          onSend={(messagesToSend) => sendMessage(messagesToSend[0])}
+          imageStyle={{ height: 212, width: 212, borderRadius: 16 }}
+          messagesContainerStyle={styles.messagesContainer}
+          textInputStyle={styles.textInput}
+          textInputProps={{
+            placeholderTextColor: colors.textMuted,
+          }}
+          user={{
+            _id: auth?.currentUser?.email,
+            name: auth?.currentUser?.displayName,
+            avatar: 'https://i.pravatar.cc/300',
+          }}
+          renderBubble={RenderBubble}
+          renderMessageVideo={MessageVideo}
+          renderSend={(props) => RenderAttach({ ...props, onPress: handleAttachmentPress })}
+          renderUsernameOnMessage
+          renderAvatarOnTop
+          renderInputToolbar={(props) => RenderInputToolbar(props, handleEmojiPanel)}
+          minInputToolbarHeight={64}
+          scrollToBottom
+          onPressActionButton={handleEmojiPanel}
+          scrollToBottomStyle={styles.scrollToBottomStyle}
+          renderLoading={loading ? RenderLoading : undefined}
+          renderTicks={renderTicks}
+          renderChatFooter={() => {
+            if (uploading) {
+              return <Text style={styles.statusBanner}>Uploading media...</Text>;
+            }
 
-          if (failedMessagesCount > 0) {
-            return (
-              <Text style={styles.statusBanner}>
-                {failedMessagesCount} message{failedMessagesCount > 1 ? 's' : ''} failed. Long-press to retry or remove.
-              </Text>
-            );
-          }
+            if (failedMessagesCount > 0) {
+              return (
+                <Text style={styles.statusBanner}>
+                  {failedMessagesCount} message{failedMessagesCount > 1 ? 's' : ''} failed. Long-press to retry or remove.
+                </Text>
+              );
+            }
 
-          if (sendingMessagesCount > 0) {
-            return (
-              <Text style={styles.statusBanner}>
-                Sending {sendingMessagesCount} message{sendingMessagesCount > 1 ? 's' : ''}...
-              </Text>
-            );
-          }
+            if (sendingMessagesCount > 0) {
+              return (
+                <Text style={styles.statusBanner}>
+                  Sending {sendingMessagesCount} message{sendingMessagesCount > 1 ? 's' : ''}...
+                </Text>
+              );
+            }
 
-          return null;
-        }}
-        onLongPress={handleMessageLongPress}
-      />
+            return null;
+          }}
+          onLongPress={handleMessageLongPress}
+        />
+      </LinearGradient>
 
       {modal && (
         <EmojiModal
@@ -531,7 +548,7 @@ function Chat({ route }) {
           backgroundStyle={styles.emojiBackgroundModal}
           columns={5}
           emojiSize={66}
-          activeShortcutColor={colors.primary}
+          activeShortcutColor={colors.accent}
           onEmojiSelected={(emoji) => {
             sendMessage({
               _id: String(uuid.v4()),
@@ -549,10 +566,36 @@ const styles = StyleSheet.create({
   addImageIcon: {
     alignItems: 'center',
     borderRadius: 22,
-    bottom: 2,
+    bottom: 4,
     height: 44,
     justifyContent: 'center',
     width: 44,
+  },
+  bubbleLeft: {
+    backgroundColor: colors.bubbleReceived,
+    borderColor: colors.bubbleReceivedBorder,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    marginBottom: spacing.xxs,
+    paddingVertical: 2,
+  },
+  bubbleRight: {
+    backgroundColor: colors.bubbleSent,
+    borderColor: colors.bubbleSentBorder,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    marginBottom: spacing.xxs,
+    paddingVertical: 2,
+  },
+  bubbleTextLeft: {
+    color: colors.textPrimary,
+    fontSize: 15,
+    lineHeight: 21,
+  },
+  bubbleTextRight: {
+    color: colors.textPrimary,
+    fontSize: 15,
+    lineHeight: 21,
   },
   emojiBackgroundModal: {},
   emojiContainerModal: {
@@ -562,24 +605,41 @@ const styles = StyleSheet.create({
   emojiIcon: {
     alignItems: 'center',
     borderRadius: 22,
-    bottom: 2,
+    bottom: 4,
     height: 44,
     justifyContent: 'center',
     marginLeft: 4,
     width: 44,
   },
   emojiModal: {},
+  gradientContainer: {
+    flex: 1,
+  },
+  inputBarGlass: {
+    alignItems: 'center',
+    backgroundColor: colors.glass,
+    borderColor: colors.glassBorder,
+    borderRadius: 28,
+    borderWidth: 0.5,
+    flexDirection: 'row',
+    marginHorizontal: spacing.sm,
+    paddingRight: spacing.xxs,
+  },
+  inputBarOuter: {
+    paddingBottom: spacing.xs,
+    paddingTop: spacing.xxs,
+  },
+  inputPrimary: {
+    alignItems: 'center',
+  },
   inputToolbar: {
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderColor: colors.grey,
-    borderRadius: 22,
-    borderWidth: 0.5,
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
     flex: 1,
     flexDirection: 'row',
-    marginHorizontal: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.xxs,
+    paddingVertical: spacing.xxs,
   },
   loadingContainer: {
     alignItems: 'center',
@@ -588,7 +648,7 @@ const styles = StyleSheet.create({
   },
   loadingContainerUpload: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
     bottom: 0,
     justifyContent: 'center',
     left: 0,
@@ -597,21 +657,59 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 999,
   },
+  messagesContainer: {
+    backgroundColor: 'transparent',
+    paddingBottom: spacing.xs,
+  },
   scrollToBottomStyle: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
+    borderRadius: 20,
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  sendButton: {
+    alignItems: 'center',
+    backgroundColor: colors.accent,
+    borderRadius: 16,
+    height: 32,
+    justifyContent: 'center',
+    width: 32,
   },
   sendIconContainer: {
     alignItems: 'center',
     height: 44,
     justifyContent: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: spacing.xxs,
     width: 44,
   },
   statusBanner: {
-    color: '#475569',
+    color: colors.textSecondary,
     fontSize: 13,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  textInput: {
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    color: colors.textPrimary,
+    fontSize: 16,
+    lineHeight: 22,
+    paddingTop: 8,
+  },
+  timeTextLeft: {
+    color: colors.textTertiary,
+    fontSize: 11,
+  },
+  timeTextRight: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 11,
+  },
+  usernameStyle: {
+    color: colors.accentLight,
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
 

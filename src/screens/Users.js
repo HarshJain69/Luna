@@ -1,14 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Alert, FlatList, StyleSheet } from 'react-native';
 import { query, where, orderBy, collection, onSnapshot } from 'firebase/firestore';
 
 import Cell from '../components/Cell';
 import ContactRow from '../components/ContactRow';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
 import { auth, database } from '../config/firebase';
 import { createDirectChat } from '../services/chatService';
-import { colors, layout, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 import { backfillCurrentUserChatMetadata } from '../services/chatMessageService';
 import { getDisplayName, getUserStatusText, isChatVisibleForUser } from '../utils/chat';
 
@@ -137,31 +139,31 @@ const Users = () => {
   );
 
   const renderUsersHeader = useCallback(
-    () => <Text style={[styles.textContainer, styles.registeredUsersLabel]}>Registered users</Text>,
+    () => <Text style={styles.registeredUsersLabel}>Registered users</Text>,
     []
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <Cell
         title="New group"
         icon="people"
-        tintColor={colors.teal}
+        tintColor={colors.accent}
         onPress={handleNewGroup}
         style={styles.newGroupCell}
       />
 
       {users.length === 0 ? (
         <View style={styles.pageContent}>
-          <View style={styles.listCard}>
+          <GlassCard style={styles.listCard}>
             <View style={styles.blankContainer}>
               <Text style={styles.textContainer}>No registered users yet</Text>
             </View>
-          </View>
+          </GlassCard>
         </View>
       ) : (
         <View style={styles.pageContent}>
-          <View style={styles.listCard}>
+          <GlassCard style={styles.listCard}>
             <FlatList
               data={users}
               renderItem={renderUser}
@@ -170,10 +172,10 @@ const Users = () => {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.listContent}
             />
-          </View>
+          </GlassCard>
         </View>
       )}
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
@@ -183,22 +185,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
-  },
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
+    paddingVertical: spacing.xxl,
   },
   listCard: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
     flex: 1,
-    overflow: 'hidden',
   },
   listContent: {
     paddingBottom: spacing.lg,
   },
   newGroupCell: {
+    backgroundColor: colors.glass,
+    borderColor: colors.glassBorder,
     borderRadius: layout.cardRadius,
+    borderWidth: 1,
     marginHorizontal: layout.pageInset,
     marginTop: layout.pageTopInset,
     overflow: 'hidden',
@@ -210,13 +209,19 @@ const styles = StyleSheet.create({
     paddingTop: layout.pageTopInset,
   },
   registeredUsersLabel: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '500',
     marginBottom: spacing.sm,
+    marginHorizontal: spacing.md,
     marginTop: spacing.md,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   textContainer: {
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: '300',
-    marginHorizontal: spacing.md,
   },
 });
 

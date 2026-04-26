@@ -1,21 +1,23 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,
   View,
-  Image,
   Alert,
   TextInput,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { auth } from '../config/firebase';
-import backImage from '../assets/background.png';
-import { colors, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -36,74 +38,113 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={backImage} style={styles.backImage} />
-      <View style={styles.whiteSheet} />
-      <SafeAreaView style={styles.form}>
-        <Text style={styles.title}>Log In</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          autoFocus
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter password"
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry
-          textContentType="password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
-          <Text style={styles.buttonLabel}>Log In</Text>
-        </TouchableOpacity>
-        <View style={styles.footerRow}>
-          <Text style={styles.footerText}>
-            Don&apos;t have an account? &nbsp;
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.footerLink}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+    <LinearGradient colors={[colors.background, colors.backgroundEnd]} style={styles.container}>
       <StatusBar barStyle="light-content" />
-    </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <View style={styles.form}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Ionicons name="moon" size={40} color={colors.accent} />
+            </View>
+            <Text style={styles.brandName}>Luna</Text>
+            <Text style={styles.brandSubtitle}>The Moon Project</Text>
+          </View>
+
+          <Text style={styles.title}>Welcome back</Text>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="mail-outline" size={20} color={colors.textMuted} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email address"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              autoFocus
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={20} color={colors.textMuted} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              textContentType="password"
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
+            <LinearGradient
+              colors={[colors.accent, colors.accentDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonLabel}>Sign In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+              <Text style={styles.footerLink}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
+
 const styles = StyleSheet.create({
-  backImage: {
-    height: 340,
-    position: 'absolute',
-    resizeMode: 'cover',
-    top: 0,
-    width: '100%',
+  brandName: {
+    color: colors.textPrimary,
+    fontSize: 32,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginTop: spacing.md,
+  },
+  brandSubtitle: {
+    color: colors.textTertiary,
+    fontSize: 14,
+    fontWeight: '400',
+    letterSpacing: 2,
+    marginTop: spacing.xxs,
+    textTransform: 'uppercase',
   },
   button: {
+    borderRadius: 16,
+    marginTop: spacing.lg,
+    overflow: 'hidden',
+  },
+  buttonGradient: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    height: 58,
+    height: 56,
     justifyContent: 'center',
-    marginTop: spacing.sm,
   },
   buttonLabel: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: colors.textPrimary,
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   container: {
-    backgroundColor: '#fff',
     flex: 1,
   },
   footerLink: {
-    color: colors.pink,
+    color: colors.accentLight,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -111,40 +152,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: spacing.lg,
+    marginTop: spacing.xl,
   },
   footerText: {
-    color: 'gray',
+    color: colors.textTertiary,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '400',
   },
   form: {
     flex: 1,
     justifyContent: 'center',
-    marginHorizontal: spacing.xl,
+    paddingHorizontal: spacing.xl,
   },
   input: {
-    backgroundColor: '#F6F7FB',
-    borderRadius: 10,
+    color: colors.textPrimary,
+    flex: 1,
     fontSize: 16,
-    height: 58,
+    height: 56,
+    paddingVertical: 0,
+  },
+  inputContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.inputBg,
+    borderColor: colors.inputBorder,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
     marginBottom: spacing.sm,
-    padding: 12,
+    paddingHorizontal: spacing.md,
+  },
+  inputIcon: {
+    marginRight: spacing.sm,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  logoCircle: {
+    alignItems: 'center',
+    backgroundColor: colors.accentGlow,
+    borderColor: colors.glassBorder,
+    borderRadius: 36,
+    borderWidth: 1,
+    height: 72,
+    justifyContent: 'center',
+    width: 72,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.xxl,
   },
   title: {
-    alignSelf: 'center',
-    color: 'black',
-    fontSize: 36,
-    fontWeight: 'bold',
+    color: colors.textPrimary,
+    fontSize: 28,
+    fontWeight: '700',
     marginBottom: spacing.lg,
-  },
-  whiteSheet: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 60,
-    bottom: 0,
-    height: '75%',
-    position: 'absolute',
-    width: '100%',
   },
 });
 
