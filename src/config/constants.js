@@ -1,25 +1,18 @@
+// Backward-compatible re-exports from the Luna design system
+// Legacy code imports from here; new code should import from '../theme'
+
+import { colors as themeColors } from '../theme/colors';
+import { spacing as themeSpacing, layout as themeLayout } from '../theme/spacing';
+
 export const colors = {
-  primary: '#2196f3',
-  border: '#565656',
-  red: '#EF5350',
-  pink: '#EC407A',
-  teal: '#26A69A',
-  grey: '#BDBDBD',
+  primary: themeColors.accent,
+  border: themeColors.glassBorder,
+  red: themeColors.danger,
+  pink: themeColors.accentLight,
+  teal: themeColors.accent,
+  grey: themeColors.textMuted,
+  ...themeColors,
 };
 
-export const spacing = {
-  xxs: 4,
-  xs: 8,
-  sm: 12,
-  md: 16,
-  lg: 20,
-  xl: 24,
-  xxl: 32,
-};
-
-export const layout = {
-  cardRadius: 16,
-  fabOffset: spacing.md,
-  pageInset: spacing.md,
-  pageTopInset: 16,
-};
+export const spacing = themeSpacing;
+export const layout = themeLayout;
