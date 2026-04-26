@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useContext } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -155,8 +155,9 @@ const RootNavigator = () => {
   return (
     <NavigationContainer
       theme={{
-        dark: true,
+        ...DarkTheme,
         colors: {
+          ...DarkTheme.colors,
           primary: colors.accent,
           background: colors.background,
           card: colors.background,

@@ -18,13 +18,15 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'com.luna.app',
     },
     android: {
       adaptiveIcon: {
         foregroundImage: 'src/assets/adaptive-icon.png',
         backgroundColor: '#0A0A0F',
       },
-      package: 'com.ctere1.reactnativechat',
+      package: 'com.luna.app',
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || './google-services.json',
     },
     web: {
       favicon: 'src/assets/favicon.png',
