@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 
 import { buildInitials } from '../utils/chat';
-import { colors, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
+import ScalePressable from './ui/AnimatedPressable';
 
 const ContactRow = ({
   name,
@@ -17,7 +19,7 @@ const ContactRow = ({
   subtitle2,
   newMessageCount,
 }) => (
-  <TouchableOpacity
+  <ScalePressable
     accessibilityHint={newMessageCount > 0 ? `${newMessageCount} unread messages` : undefined}
     accessibilityLabel={`${name}. ${subtitle}${subtitle2 ? `. ${subtitle2}` : ''}`}
     accessibilityRole="button"
@@ -30,8 +32,8 @@ const ContactRow = ({
     </View>
 
     <View style={styles.textsContainer}>
-      <Text style={styles.name}>{name}</Text>
-      <Text style={styles.subtitle}>{subtitle}</Text>
+      <Text style={styles.name} numberOfLines={1}>{name}</Text>
+      <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text>
     </View>
 
     <View style={styles.rightContainer}>
@@ -49,47 +51,50 @@ const ContactRow = ({
         </View>
       )}
 
-      {showForwardIcon && <Ionicons name="chevron-forward-outline" size={20} />}
+      {showForwardIcon && <Ionicons name="chevron-forward-outline" size={20} color={colors.textTertiary} />}
     </View>
-  </TouchableOpacity>
+  </ScalePressable>
 );
 
 const styles = StyleSheet.create({
   avatar: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     borderRadius: 26,
     height: 52,
     justifyContent: 'center',
     width: 52,
   },
   avatarLabel: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 18,
+    fontWeight: '600',
   },
   name: {
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '600',
     lineHeight: 20,
   },
   newMessageBadge: {
     alignItems: 'center',
-    backgroundColor: colors.teal,
+    backgroundColor: colors.accent,
     borderRadius: 12,
     justifyContent: 'center',
     marginBottom: spacing.xxs,
+    minWidth: 24,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   newMessageText: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 12,
     fontWeight: 'bold',
   },
   overlay: {
     alignItems: 'center',
-    backgroundColor: colors.teal,
-    borderColor: 'black',
+    backgroundColor: colors.accent,
+    borderColor: colors.glassBorder,
     borderRadius: 11,
     borderWidth: 1.5,
     height: 22,
@@ -107,22 +112,22 @@ const styles = StyleSheet.create({
   },
   row: {
     alignItems: 'center',
+    borderBottomColor: colors.divider,
     borderBottomWidth: 0.5,
-    borderColor: '#e0e0e0',
     flexDirection: 'row',
-    minHeight: 68,
+    minHeight: 72,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
   subtitle: {
-    color: '#565656',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 18,
     marginTop: spacing.xxs,
     maxWidth: 200,
   },
   subtitle2: {
-    color: '#8e8e8e',
+    color: colors.textTertiary,
     fontSize: 12,
     marginBottom: spacing.xxs,
   },

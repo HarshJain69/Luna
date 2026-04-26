@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 
 const Cell = ({
   title,
   icon,
-  iconColor = 'white',
+  iconColor = colors.textPrimary,
   tintColor,
   style,
   onPress,
@@ -24,7 +25,7 @@ const Cell = ({
     style={[styles.cell, style]}
     onPress={onPress}
   >
-    <View style={[styles.iconContainer, { backgroundColor: tintColor }]}>
+    <View style={[styles.iconContainer, { backgroundColor: tintColor || colors.surface }]}>
       <Ionicons name={icon} size={24} marginStart={4} color={iconColor} />
     </View>
 
@@ -32,14 +33,14 @@ const Cell = ({
       <Text style={styles.title}>{title}</Text>
       {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
     </View>
-    {showForwardIcon && <Ionicons name={secondIcon ?? 'chevron-forward-outline'} size={20} />}
+    {showForwardIcon && <Ionicons name={secondIcon ?? 'chevron-forward-outline'} size={20} color={colors.textTertiary} />}
   </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
   cell: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     minHeight: 56,
     paddingHorizontal: spacing.md,
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     width: 30,
   },
   subtitle: {
-    color: '#565656',
+    color: colors.textSecondary,
     fontSize: 13,
     lineHeight: 18,
     marginTop: spacing.xxs,
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
     marginStart: spacing.sm,
   },
   title: {
+    color: colors.textPrimary,
     fontSize: 16,
     lineHeight: 20,
   },

@@ -16,9 +16,12 @@ import {
 } from 'react-native';
 
 import ContactRow from '../components/ContactRow';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
 import { auth, database } from '../config/firebase';
 import { deleteChatForUser } from '../services/chatService';
-import { colors, layout, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 import { scheduleChatNotification } from '../services/notificationService';
 import {
   markChatAsRead,
@@ -237,7 +240,7 @@ const Chats = () => {
         selectedItems.length > 0
           ? () => (
             <TouchableOpacity style={styles.trashBin} onPress={handleDeleteChat}>
-              <Ionicons name="trash" size={24} color={colors.teal} />
+              <Ionicons name="trash" size={24} color={colors.accent} />
             </TouchableOpacity>
           )
           : undefined,
@@ -285,7 +288,9 @@ const Chats = () => {
   const renderEmptyChats = useCallback(
     () => (
       <View style={styles.emptyStateContainer}>
-        <Text style={styles.textContainer}>No conversations yet</Text>
+        <Ionicons name="chatbubbles-outline" size={48} color={colors.textMuted} style={styles.emptyIcon} />
+        <Text style={styles.emptyText}>No conversations yet</Text>
+        <Text style={styles.emptySubtext}>Start chatting by tapping the button below</Text>
       </View>
     ),
     []
@@ -304,45 +309,47 @@ const Chats = () => {
   );
 
   return (
-    <Pressable style={styles.container} onPress={deSelectItems}>
-      {loading ? (
-        <ActivityIndicator size="large" color={colors.teal} style={styles.loadingContainer} />
-      ) : (
-        <View style={styles.pageContent}>
-          <View style={styles.listCard}>
-            <FlatList
-              data={chats}
-              renderItem={renderChat}
-              keyExtractor={(item) => item.id}
-              ListEmptyComponent={renderEmptyChats}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={styles.listContent}
-            />
+    <ScreenWrapper>
+      <Pressable style={styles.container} onPress={deSelectItems}>
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.accent} style={styles.loadingContainer} />
+        ) : (
+          <View style={styles.pageContent}>
+            <GlassCard style={styles.listCard}>
+              <FlatList
+                data={chats}
+                renderItem={renderChat}
+                keyExtractor={(item) => item.id}
+                ListEmptyComponent={renderEmptyChats}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={styles.listContent}
+              />
+            </GlassCard>
+            {renderListFooter()}
           </View>
-          {renderListFooter()}
-        </View>
-      )}
-      <TouchableOpacity style={styles.fab} onPress={handleFabPress}>
-        <View style={styles.fabContainer}>
-          <Ionicons name="chatbox-ellipses" size={24} color="white" />
-        </View>
-      </TouchableOpacity>
-    </Pressable>
+        )}
+        <TouchableOpacity style={styles.fab} onPress={handleFabPress}>
+          <View style={styles.fabContainer}>
+            <Ionicons name="chatbox-ellipses" size={24} color="white" />
+          </View>
+        </TouchableOpacity>
+      </Pressable>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F8FAFC',
     flex: 1,
   },
   disclaimerEmphasis: {
-    color: colors.teal,
+    color: colors.accent,
   },
   disclaimerIcon: {
-    color: '#565656',
+    color: colors.textMuted,
   },
   disclaimerText: {
+    color: colors.textTertiary,
     fontSize: 12,
     lineHeight: 18,
     marginBottom: spacing.lg,
@@ -350,9 +357,24 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     textAlign: 'center',
   },
+  emptyIcon: {
+    marginBottom: spacing.md,
+  },
   emptyStateContainer: {
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.xxl,
+  },
+  emptySubtext: {
+    color: colors.textMuted,
+    fontSize: 14,
+    marginTop: spacing.xs,
+    textAlign: 'center',
+  },
+  emptyText: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    textAlign: 'center',
   },
   fab: {
     bottom: layout.fabOffset,
@@ -361,26 +383,28 @@ const styles = StyleSheet.create({
   },
   fabContainer: {
     alignItems: 'center',
-    backgroundColor: colors.teal,
-    borderRadius: 28,
-    height: 56,
+    backgroundColor: colors.accent,
+    borderRadius: layout.fabRadius,
+    height: layout.fabSize,
     justifyContent: 'center',
-    width: 56,
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+    width: layout.fabSize,
   },
   footerContainer: {
     alignItems: 'center',
   },
   itemCount: {
-    color: colors.teal,
+    color: colors.accent,
     fontSize: 18,
     fontWeight: '400',
     marginLeft: layout.pageInset,
   },
   listCard: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
     flex: 1,
-    overflow: 'hidden',
   },
   listContent: {
     flexGrow: 1,
@@ -388,7 +412,6 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     alignItems: 'center',
-    color: colors.teal,
     flex: 1,
     justifyContent: 'center',
   },
@@ -398,15 +421,9 @@ const styles = StyleSheet.create({
     paddingTop: layout.pageTopInset,
   },
   selectedContactRow: {
-    backgroundColor: colors.grey,
-  },
-  textContainer: {
-    color: '#565656',
-    fontSize: 16,
-    textAlign: 'center',
+    backgroundColor: colors.accentGlow,
   },
   trashBin: {
-    color: colors.teal,
     paddingRight: layout.pageInset,
   },
 });

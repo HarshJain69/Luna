@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { buildInitials } from '../utils/chat';
-import { colors, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 
 const ChatHeader = ({ chatName, chatId }) => {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ const ChatHeader = ({ chatName, chatId }) => {
 const styles = StyleSheet.create({
   avatar: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     borderRadius: 20,
     height: 40,
     justifyContent: 'center',
@@ -40,11 +41,12 @@ const styles = StyleSheet.create({
     width: 40,
   },
   avatarLabel: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 20,
+    fontWeight: '600',
   },
   chatName: {
-    color: 'black',
+    color: colors.textPrimary,
     fontSize: 18,
     fontWeight: 'bold',
   },

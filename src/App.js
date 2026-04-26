@@ -2,11 +2,12 @@ import 'react-native-get-random-values';
 import { registerRootComponent } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useContext } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Chat from './screens/Chat';
 import Help from './screens/Help';
@@ -20,7 +21,7 @@ import Profile from './screens/Profile';
 import Account from './screens/Account';
 import Settings from './screens/Settings';
 import ChatInfo from './screens/ChatInfo';
-import { colors } from './config/constants';
+import { colors } from './theme/colors';
 import ChatMenu from './components/ChatMenu';
 import ChatHeader from './components/ChatHeader';
 import { configureNotifications } from './services/notificationService';
@@ -45,12 +46,42 @@ const TabNavigator = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarAccessibilityLabel: route.name,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textTertiary,
         headerShown: true,
+        headerStyle: {
+          backgroundColor: colors.background,
+          borderBottomColor: colors.tabBarBorder,
+          borderBottomWidth: 0.5,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerTintColor: colors.textPrimary,
+        headerTitleStyle: {
+          color: colors.textPrimary,
+          fontSize: 20,
+          fontWeight: '700',
+        },
+        tabBarStyle: {
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.tabBarBorder,
+          borderTopWidth: 0.5,
+        },
       })}
     >
-      <Tab.Screen name="Chats" options={{ tabBarBadge: unreadCount > 0 ? unreadCount : null }}>
+      <Tab.Screen
+        name="Chats"
+        options={{
+          headerTitle: 'Luna',
+          tabBarBadge: unreadCount > 0 ? unreadCount : null,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.accent,
+            color: colors.textPrimary,
+            fontSize: 11,
+            fontWeight: '700',
+          },
+        }}
+      >
         {() => <Chats />}
       </Tab.Screen>
       <Tab.Screen name="Settings" component={Settings} />
@@ -58,8 +89,28 @@ const TabNavigator = () => {
   );
 };
 
+const darkStackScreenOptions = {
+  headerStyle: {
+    backgroundColor: colors.background,
+    borderBottomColor: colors.tabBarBorder,
+    borderBottomWidth: 0.5,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  headerTintColor: colors.textPrimary,
+  headerTitleStyle: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  headerBackTitleVisible: false,
+  cardStyle: {
+    backgroundColor: colors.background,
+  },
+};
+
 const MainStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={darkStackScreenOptions}>
     <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
     <Stack.Screen
       name="Chat"
@@ -95,13 +146,29 @@ const RootNavigator = () => {
 
   if (typeof user === 'undefined') {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
+      <LinearGradient colors={[colors.background, colors.backgroundEnd]} style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </LinearGradient>
     );
   }
 
-  return <NavigationContainer>{user ? <MainStack /> : <AuthStack />}</NavigationContainer>;
+  return (
+    <NavigationContainer
+      theme={{
+        dark: true,
+        colors: {
+          primary: colors.accent,
+          background: colors.background,
+          card: colors.background,
+          text: colors.textPrimary,
+          border: colors.tabBarBorder,
+          notification: colors.accent,
+        },
+      }}
+    >
+      {user ? <MainStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
 };
 
 const App = () => {
@@ -119,5 +186,13 @@ const App = () => {
     </MenuProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 export default registerRootComponent(App);

@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Text, View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 
+import { colors } from '../theme/colors';
 import { auth, database } from '../config/firebase';
 import { deleteChatForUser } from '../services/chatService';
 
@@ -59,7 +60,7 @@ const ChatMenu = ({ chatName, chatId }) => {
           accessibilityRole="button"
           style={styles.menuButton}
         >
-          <Ionicons name="ellipsis-vertical" size={24} color="#373737" style={styles.menuIcon} />
+          <Ionicons name="ellipsis-vertical" size={24} color={colors.textSecondary} style={styles.menuIcon} />
         </View>
       </MenuTrigger>
       <MenuOptions customStyles={menuOptionsStyles}>
@@ -67,16 +68,16 @@ const ChatMenu = ({ chatName, chatId }) => {
           onSelect={() => navigation.navigate('ChatInfo', { chatId, chatName })}
           style={styles.optionRow}
         >
-          <Ionicons name="information-circle-outline" size={20} color="#008069" style={styles.optionIcon} />
+          <Ionicons name="information-circle-outline" size={20} color={colors.accent} style={styles.optionIcon} />
           <Text style={styles.optionText}>Chat Info</Text>
         </MenuOption>
         <MenuOption
           onSelect={handleDeleteChat}
           style={styles.optionRow}
         >
-          <Ionicons name="trash-outline" size={20} color="#FF3B30" style={styles.optionIcon} />
+          <Ionicons name="trash-outline" size={20} color={colors.danger} style={styles.optionIcon} />
           <View style={styles.optionTextContainer}>
-            <Text style={[styles.optionText, { color: '#FF3B30' }]}>Delete Chat</Text>
+            <Text style={[styles.optionText, { color: colors.danger }]}>Delete Chat</Text>
             <Text style={styles.optionSubtitle}>Remove it from your chat list</Text>
           </View>
         </MenuOption>
@@ -105,8 +106,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
   },
+  optionSubtitle: {
+    color: colors.textTertiary,
+    fontSize: 12,
+    marginTop: 2,
+  },
   optionText: {
-    color: '#373737',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -117,15 +123,17 @@ const styles = StyleSheet.create({
 
 const menuOptionsStyles = {
   optionsContainer: {
-    borderRadius: 12,
+    backgroundColor: '#1C1C2E',
+    borderColor: colors.glassBorder,
+    borderRadius: 14,
+    borderWidth: 1,
+    elevation: 8,
+    minWidth: 200,
     paddingVertical: 4,
-    backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOpacity: 0.11,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
     shadowRadius: 20,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-    minWidth: 185,
   },
   optionWrapper: {
     backgroundColor: 'transparent',
