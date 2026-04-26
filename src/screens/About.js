@@ -1,14 +1,16 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, ScrollView, StyleSheet } from 'react-native';
 
-import { layout, spacing } from '../config/constants';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 
 const sections = [
   {
-    title: 'Open-source starter',
+    title: 'About Luna',
     body:
-      'React Native Chat is an Expo and Firebase starter project for direct and group messaging, media sharing, and real-time updates.',
+      'Luna – The Moon Project is a premium messaging experience built with Expo and Firebase. Designed for direct and group messaging, media sharing, and real-time updates.',
   },
   {
     title: 'Your Firebase project',
@@ -23,39 +25,37 @@ const sections = [
 ];
 
 const About = () => (
-  <SafeAreaView style={styles.container}>
+  <ScreenWrapper>
     <ScrollView contentContainerStyle={styles.content}>
       {sections.map((section) => (
-        <View key={section.title} style={styles.card}>
-          <Text style={styles.cardTitle}>{section.title}</Text>
-          <Text style={styles.cardBody}>{section.body}</Text>
-        </View>
+        <GlassCard key={section.title} style={styles.card}>
+          <View style={styles.cardInner}>
+            <Text style={styles.cardTitle}>{section.title}</Text>
+            <Text style={styles.cardBody}>{section.body}</Text>
+          </View>
+        </GlassCard>
       ))}
     </ScrollView>
-  </SafeAreaView>
+  </ScreenWrapper>
 );
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
-    padding: spacing.md,
-    width: '100%',
+    marginBottom: spacing.sm,
   },
   cardBody: {
-    color: '#4B5563',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
-    marginTop: 8,
+    marginTop: spacing.xs,
+  },
+  cardInner: {
+    padding: spacing.md,
   },
   cardTitle: {
-    color: '#111827',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '600',
-  },
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
   },
   content: {
     gap: spacing.sm,

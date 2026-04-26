@@ -1,9 +1,11 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Alert, Linking, ScrollView, StyleSheet } from 'react-native';
 
 import Cell from '../components/Cell';
-import { colors, layout, spacing } from '../config/constants';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 
 const Help = () => {
   const openSupport = async () => {
@@ -15,14 +17,15 @@ const Help = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.section}>
+        <GlassCard>
           <Cell
             title="Contact support"
             subtitle="Open issue reporting and technical help"
             icon="help-buoy-outline"
-            tintColor={colors.primary}
+            tintColor={colors.surface}
+            iconColor={colors.accent}
             onPress={openSupport}
             accessibilityHint="Opens the support page in your browser"
           />
@@ -30,7 +33,8 @@ const Help = () => {
             title="Firebase setup"
             subtitle="This project uses the Firebase config you provide"
             icon="cloud-outline"
-            tintColor={colors.teal}
+            tintColor={colors.surface}
+            iconColor={colors.success}
             showForwardIcon={false}
             accessibilityHint="Shows Firebase setup guidance"
             onPress={() => {
@@ -44,7 +48,8 @@ const Help = () => {
             title="Troubleshooting"
             subtitle="Use the repository issues page for bugs and setup problems"
             icon="construct-outline"
-            tintColor={colors.pink}
+            tintColor={colors.surface}
+            iconColor={colors.warning}
             showForwardIcon={false}
             accessibilityHint="Shows troubleshooting guidance"
             onPress={() => {
@@ -54,25 +59,17 @@ const Help = () => {
               );
             }}
           />
-        </View>
+        </GlassCard>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-  },
   content: {
     paddingBottom: spacing.lg,
     paddingHorizontal: layout.pageInset,
     paddingTop: layout.pageTopInset,
-  },
-  section: {
-    borderRadius: layout.cardRadius,
-    overflow: 'hidden',
   },
 });
 
