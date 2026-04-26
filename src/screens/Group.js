@@ -16,9 +16,12 @@ import {
 } from 'react-native';
 
 import ContactRow from '../components/ContactRow';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
 import { auth, database } from '../config/firebase';
 import { createGroupChat } from '../services/chatService';
-import { colors, layout, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 import { getDisplayName, getUserStatusText } from '../utils/chat';
 
 const Group = () => {
@@ -119,69 +122,74 @@ const Group = () => {
   );
 
   return (
-    <Pressable style={styles.container} onPress={deSelectItems}>
-      {selectableUsers.length === 0 ? (
-        <View style={styles.pageContent}>
-          <View style={styles.listCard}>
-            <View style={styles.blankContainer}>
-              <Text style={styles.textContainer}>No registered users yet</Text>
+    <ScreenWrapper>
+      <Pressable style={styles.container} onPress={deSelectItems}>
+        {selectableUsers.length === 0 ? (
+          <View style={styles.pageContent}>
+            <GlassCard style={styles.listCard}>
+              <View style={styles.blankContainer}>
+                <Text style={styles.textContainer}>No registered users yet</Text>
+              </View>
+            </GlassCard>
+          </View>
+        ) : (
+          <View style={styles.pageContent}>
+            <GlassCard style={styles.listCard}>
+              <FlatList
+                data={selectableUsers}
+                renderItem={renderUser}
+                keyExtractor={(item) => item.id}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={styles.listContent}
+              />
+            </GlassCard>
+          </View>
+        )}
+        {selectedItems.length > 0 && (
+          <TouchableOpacity style={styles.fab} onPress={handleFabPress} disabled={isCreatingGroup}>
+            <View style={styles.fabContainer}>
+              <Ionicons name="arrow-forward-outline" size={24} color="white" />
             </View>
+          </TouchableOpacity>
+        )}
+        <Modal
+          animationType="slide"
+          transparent
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalBackdrop}>
+            <GlassCard style={styles.modalCard}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Enter Group Name</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setGroupName}
+                  value={groupName}
+                  placeholder="Group Name"
+                  placeholderTextColor={colors.textMuted}
+                  editable={!isCreatingGroup}
+                  onSubmitEditing={handleCreateGroup}
+                />
+                <TouchableOpacity
+                  style={[styles.createButton, isCreatingGroup ? styles.createButtonDisabled : undefined]}
+                  onPress={handleCreateGroup}
+                  disabled={isCreatingGroup}
+                >
+                  {isCreatingGroup ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.createButtonLabel}>Create group</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </GlassCard>
           </View>
-        </View>
-      ) : (
-        <View style={styles.pageContent}>
-          <View style={styles.listCard}>
-            <FlatList
-              data={selectableUsers}
-              renderItem={renderUser}
-              keyExtractor={(item) => item.id}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={styles.listContent}
-            />
-          </View>
-        </View>
-      )}
-      {selectedItems.length > 0 && (
-        <TouchableOpacity style={styles.fab} onPress={handleFabPress} disabled={isCreatingGroup}>
-          <View style={styles.fabContainer}>
-            <Ionicons name="arrow-forward-outline" size={24} color="white" />
-          </View>
-        </TouchableOpacity>
-      )}
-      <Modal
-        animationType="slide"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Enter Group Name</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={setGroupName}
-              value={groupName}
-              placeholder="Group Name"
-              editable={!isCreatingGroup}
-              onSubmitEditing={handleCreateGroup} // Create group on submit
-            />
-            <TouchableOpacity
-              style={[styles.createButton, isCreatingGroup ? styles.createButtonDisabled : undefined]}
-              onPress={handleCreateGroup}
-              disabled={isCreatingGroup}
-            >
-              {isCreatingGroup ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.createButtonLabel}>Create group</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </Pressable>
+        </Modal>
+      </Pressable>
+    </ScreenWrapper>
   );
 };
 
@@ -191,24 +199,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xxl,
   },
   container: {
-    backgroundColor: '#F8FAFC',
     flex: 1,
   },
   createButton: {
     alignItems: 'center',
-    backgroundColor: colors.teal,
-    borderRadius: 12,
+    backgroundColor: colors.accent,
+    borderRadius: 14,
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 14,
     width: '100%',
   },
   createButtonDisabled: {
     opacity: 0.7,
   },
   createButtonLabel: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -219,44 +227,52 @@ const styles = StyleSheet.create({
   },
   fabContainer: {
     alignItems: 'center',
-    backgroundColor: colors.teal,
-    borderRadius: 28,
-    height: 56,
+    backgroundColor: colors.accent,
+    borderRadius: layout.fabRadius,
+    elevation: 8,
+    height: layout.fabSize,
     justifyContent: 'center',
-    width: 56,
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    width: layout.fabSize,
   },
   input: {
-    borderColor: '#cfcfcf',
-    borderRadius: 12,
+    backgroundColor: colors.inputBg,
+    borderColor: colors.inputBorder,
+    borderRadius: 14,
     borderWidth: 1,
+    color: colors.textPrimary,
     height: 48,
     marginBottom: spacing.md,
     paddingHorizontal: spacing.sm,
     width: '100%',
   },
   itemCount: {
-    color: colors.teal,
+    color: colors.accent,
     fontSize: 18,
     fontWeight: '400',
     marginRight: spacing.sm,
   },
   listCard: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
     flex: 1,
-    overflow: 'hidden',
   },
   listContent: {
     paddingBottom: 88,
     paddingTop: spacing.xs,
   },
   modalBackdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: colors.overlay,
     flex: 1,
     justifyContent: 'center',
     padding: spacing.lg,
   },
+  modalCard: {
+    borderRadius: layout.cardRadius + spacing.xxs,
+  },
   modalText: {
+    color: colors.textPrimary,
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: spacing.md,
@@ -264,9 +280,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius + spacing.xxs,
-    elevation: 5,
     padding: spacing.xl,
   },
   pageContent: {
@@ -275,9 +288,10 @@ const styles = StyleSheet.create({
     paddingTop: layout.pageTopInset,
   },
   selectedContactRow: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.accentGlow,
   },
   textContainer: {
+    color: colors.textSecondary,
     fontSize: 16,
   },
 });

@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useMemo, useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, Alert, FlatList, StyleSheet } from 'react-native';
 
 import Cell from '../components/Cell';
+import GlassCard from '../components/ui/GlassCard';
+import ScreenWrapper from '../components/ui/ScreenWrapper';
 import { database } from '../config/firebase';
-import { colors, layout, spacing } from '../config/constants';
+import { colors } from '../theme/colors';
+import { spacing, layout } from '../theme/spacing';
 import { buildInitials, dedupeUsersByEmail } from '../utils/chat';
 
 const ChatInfo = ({ route }) => {
@@ -47,7 +49,9 @@ const ChatInfo = ({ route }) => {
 
   const renderUser = ({ item }) => (
     <View style={styles.userContainer}>
-      <Ionicons name="person-outline" size={30} color={colors.primary} />
+      <View style={styles.userAvatar}>
+        <Ionicons name="person" size={18} color={colors.textPrimary} />
+      </View>
       <View style={styles.userInfo}>
         <Text style={styles.userName}>{item.name}</Text>
         <Text style={styles.userEmail}>{item.email}</Text>
@@ -58,7 +62,7 @@ const ChatInfo = ({ route }) => {
   const uniqueUsers = useMemo(() => dedupeUsersByEmail(users), [users]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper>
       <View style={styles.headerSection}>
         <View style={styles.avatar}>
           <Text style={styles.avatarLabel}>{buildInitials(chatName)}</Text>
@@ -75,22 +79,31 @@ const ChatInfo = ({ route }) => {
         </View>
       </View>
 
-      <Cell
-        title="About"
-        subtitle="Available"
-        icon="information-circle-outline"
-        iconColor={colors.primary}
-        style={styles.cell}
-      />
+      <View style={styles.cellContainer}>
+        <GlassCard>
+          <Cell
+            title="About"
+            subtitle="Available"
+            icon="information-circle-outline"
+            iconColor={colors.accent}
+            tintColor={colors.surface}
+            showForwardIcon={false}
+          />
+        </GlassCard>
+      </View>
 
       <Text style={styles.usersTitle}>Members</Text>
-      <FlatList
-        data={uniqueUsers}
-        renderItem={renderUser}
-        keyExtractor={(item) => item.email}
-        contentContainerStyle={styles.usersList}
-      />
-    </SafeAreaView>
+      <View style={styles.membersContainer}>
+        <GlassCard>
+          <FlatList
+            data={uniqueUsers}
+            renderItem={renderUser}
+            keyExtractor={(item) => item.email}
+            contentContainerStyle={styles.usersList}
+          />
+        </GlassCard>
+      </View>
+    </ScreenWrapper>
   );
 };
 
@@ -98,81 +111,91 @@ const styles = StyleSheet.create({
   avatar: {
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     borderRadius: 48,
     height: 96,
     justifyContent: 'center',
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
     width: 96,
   },
   avatarLabel: {
-    color: 'white',
+    color: colors.textPrimary,
     fontSize: 30,
     fontWeight: 'bold',
   },
-  cell: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
+  cellContainer: {
     marginBottom: spacing.sm,
     marginHorizontal: layout.pageInset,
-    overflow: 'hidden',
   },
   chatHeader: {
     alignItems: 'center',
     marginTop: spacing.sm,
   },
   chatTitle: {
-    color: '#333',
+    color: colors.textPrimary,
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
-  container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-  },
   groupLabel: {
-    color: colors.primary,
-    fontSize: 16,
+    color: colors.accent,
+    fontSize: 14,
     fontWeight: '500',
     marginBottom: spacing.xxs,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   headerSection: {
     marginBottom: spacing.md,
     marginTop: layout.pageTopInset,
   },
+  membersContainer: {
+    flex: 1,
+    marginHorizontal: layout.pageInset,
+  },
+  userAvatar: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
   userContainer: {
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
+    borderBottomColor: colors.divider,
+    borderBottomWidth: 0.5,
     flexDirection: 'row',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
   userEmail: {
-    color: '#666',
-    fontSize: 14,
+    color: colors.textTertiary,
+    fontSize: 13,
+    marginTop: 2,
   },
   userInfo: {
     marginLeft: spacing.sm,
   },
   userName: {
-    color: '#333',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '500',
   },
   usersList: {
-    backgroundColor: 'white',
-    borderRadius: layout.cardRadius,
-    marginHorizontal: layout.pageInset,
     overflow: 'hidden',
   },
   usersTitle: {
-    color: '#333',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.5,
     marginBottom: spacing.sm,
     marginHorizontal: layout.pageInset,
+    textTransform: 'uppercase',
   },
 });
 

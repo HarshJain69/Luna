@@ -21,7 +21,7 @@ const MessageVideo = ({ currentMessage }) => {
 
 const styles = StyleSheet.create({
   video: {
-    borderRadius: 12,
+    borderRadius: 18,
     height: 212,
     width: 212,
   },

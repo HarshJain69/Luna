@@ -3,17 +3,17 @@ import process from 'process';
 
 export default {
   expo: {
-    name: 'react-native-chat',
-    slug: 'react-native-chat',
+    name: 'Luna',
+    slug: 'luna',
     version: '1.0.0',
     orientation: 'portrait',
     icon: 'src/assets/icon.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'dark',
     entryPoint: './src/App.js',
     splash: {
       image: 'src/assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#0A0A0F',
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -22,7 +22,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: 'src/assets/adaptive-icon.png',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#0A0A0F',
       },
       package: 'com.ctere1.reactnativechat',
     },
